@@ -313,4 +313,32 @@ async def crear_rol(rol: RolBase, db:db_dependency):
     db.commit()
     return "Rol creado exitosamente"
 
-  
+@app.get("/roles/", status_code=status.HTTP_200_OK)
+async def listar_roles(db:db_dependency):
+    listaRoles = db.query(models.Rol).all()
+    return listaRoles
+
+@app.get("/roles/{id_rol}", status_code=status.HTTP_200_OK)
+async def buscar_rol_por_id(id_rol:int, db:db_dependency):
+    rol = db.query(models.Rol).filter(models.Rol.idrol==id_rol).first()
+    if rol is None:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    return rol
+
+@app.delete("/roles/{id_rol}", status_code=status.HTTP_200_OK)
+async def eliminar_rol(id_rol:int, db:db_dependency):
+    rolAEliminar = db.query(models.Rol).filter(models.Rol.idrol==id_rol).first()
+    if rolAEliminar is None:
+        raise HTTPException (status_code=404, detail="Rol no encontrado")
+    db.delete(rolAEliminar)
+    db.commit()
+    return "Rol eliminado exitosamente"
+
+@app.post("/rolesupdate/", status_code=status.HTTP_200_OK)
+async def actualizar_rol(rol:RolBaseUpdate, db:db_dependency):
+    rolAActualizar = db.query(models.Rol).filter(models.Rol.idrol==rol.idrol).first()
+    if rolAActualizar is None:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    rolAActualizar.nombrerol=rol.nombrerol
+    db.commit()
+    return "Rol actualizado correctamente"
