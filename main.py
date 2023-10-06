@@ -18,6 +18,29 @@ app.add_middleware(
 )
 handler = Mangum(app)
 models.Base.metadata.create_all(bind=engine)
+
+class PlanBase(BaseModel):
+    nombreplan: str
+    idtipoplanplanes: int
+    valorplan: float
+    descripcionplan: str
+    estadoplan: str
+    fotoplan: str
+    idoperadorplan: int
+    iddestinoplan: int
+
+class PlanBaseUpdate(BaseModel):
+    idplan: int
+    nombreplan: str
+    idtipoplanplanes: int
+    valorplan: float
+    descripcionplan: str
+    estadoplan: str
+    fotoplan: str
+    idoperadorplan: int
+    iddestinoplan: int
+
+
 class RolBase(BaseModel):
     nombrerol: str
 
@@ -342,3 +365,29 @@ async def actualizar_rol(rol:RolBaseUpdate, db:db_dependency):
     rolAActualizar.nombrerol=rol.nombrerol
     db.commit()
     return "Rol actualizado correctamente"
+
+'''------------------***************************************************----------------------------------
+                                    API PLANES                               
+---------------------***************************************************---------------------------------'''
+
+@app.post("/planes/", status_code=status.HTTP_201_CREATED)
+async def crear_plan(plan: PlanBase, db:db_dependency):
+    # Validamos que el valor del campo idtipoplanes exista en la tabla tipoplan
+    tipoplan = db.query(models.Tipoplan).filter(models.Tipoplan.idtipoplans==plan.idtipoplanplanes).first()
+    if tipoplan is None:
+        raise HTTPException(status_code=404, detail="El tipo de plan no existe")
+
+    # Validamos que el valor del campo iddestinoplan exista en la tabla destinos
+    destino = db.query(models.Destinos).filter(models.Destinos.iddestino==plan.iddestinoplan).first()
+    if destino is None:
+        raise HTTPException(status_code=404, detail="El destino no existe")
+
+    # Validamos que el valor en el campo idoperadorplan exista en la tabla operadores
+    operador = db.query(models.Operadores).filter(models.Operadores.idoperador==plan.idoperadorplan).first()
+    if operador is None:
+        raise HTTPException(status_code=404, detail="El operador no existe")
+
+    plan = models.Plan(**plan.dict())
+    db.add(plan)
+    db.commit()
+    return "Plan creado exitosamente"

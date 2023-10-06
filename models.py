@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 from database import Base
 
 class Usuarios(Base):
@@ -39,3 +39,14 @@ class Rol(Base):
     idrol = Column(Integer,primary_key=True, index=True)
     nombrerol = Column(String(100))
 
+class Planes(Base):
+    __tablename__ = 'planes'
+    idplan = Column(Integer, primary_key=True, index=True)
+    nombreplan = Column(String(100))
+    idtipoplanplanes = Column(Integer, ForeignKey('tipoplan.idtipoplan'))
+    valorplan = Column(Float)
+    descripcionplan = Column(String(500))
+    estadoplan = Column(String(20))
+    fotoplan = Column(String(100))
+    idoperadorplan = Column(Integer, ForeignKey('operadores.idoperador'))
+    iddestinoplan = Column(Integer, ForeignKey('destinos.iddestino'))
