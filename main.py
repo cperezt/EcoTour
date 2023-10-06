@@ -18,6 +18,12 @@ app.add_middleware(
 )
 handler = Mangum(app)
 models.Base.metadata.create_all(bind=engine)
+class RolBase(BaseModel):
+    nombrerol: str
+
+class RolBaseUpdate(BaseModel):
+    idrol: int
+    nombrerol: str
 
 class TipoPlanBase(BaseModel):
     nombretipoplan:str
@@ -79,7 +85,9 @@ def get_db():
         db.close()
 
 db_dependency = Annotated[Session, Depends(get_db)]
-
+'''------------------***************************************************----------------------------------
+                                    API USUARIOS                                 
+---------------------***************************************************---------------------------------'''
 #API Usuarios
 @app.post("/usuarios/", status_code=status.HTTP_201_CREATED)
 async def crear_usuario(usuario: UsuarioBase, db: db_dependency ):
@@ -121,7 +129,9 @@ async def actualizar_datos_usuario(usuario: UsuarioBase2, db:db_dependency):
     usuarioactualizar.estadousuario = usuario.estadousuario
     db.commit()
     
-#API Destinos
+'''------------------***************************************************----------------------------------
+                                    API DESTINOS                                 
+---------------------***************************************************---------------------------------'''
 
 @app.post("/destinos/", status_code=status.HTTP_201_CREATED)
 async def crear_destino(destino: DestinoBase, db: db_dependency ):
@@ -176,6 +186,10 @@ async def actualizar_datos_destino(id_destino:int, db:db_dependency):
         valor = "Activo"
     db.commit()
     return "Estado destino actualizado exitosamente a: "+valor
+
+'''------------------***************************************************----------------------------------
+                                    API OPERADORES                               
+---------------------***************************************************---------------------------------'''
 
 @app.post("/operador/", status_code=status.HTTP_201_CREATED)
 async def crear_operador(operador: OperadorBase, db: db_dependency ):
@@ -245,6 +259,10 @@ async def actualizar_datos_operador(id_operador:int, db:db_dependency):
     db.commit()
     return "Estado operador actualizado exitosamente a: "+valor
 
+'''------------------***************************************************----------------------------------
+                                    API TIPO PLAN                               
+---------------------***************************************************---------------------------------'''
+
 @app.post("/tipoplan/", status_code=status.HTTP_201_CREATED)
 async def crear_tipo_plan (tipoplan: TipoPlanBase, db:db_dependency):
     tipoplan = models.Tipoplan(**tipoplan.dict())
@@ -282,5 +300,17 @@ async def actualizar_tipo_plan(tipoplan:TipoPlanBaseUpdate, db:db_dependency):
     tipoPlanAActualizar.nombretipoplan=tipoplan.nombretipoplan
     db.commit()
     return "Tipo de plan actualizado correctamente"
+
+  
+'''------------------***************************************************----------------------------------
+                                    API ROL                                 
+---------------------***************************************************---------------------------------'''
+
+@app.post("/roles/", status_code=status.HTTP_201_CREATED)
+async def crear_rol(rol: RolBase, db:db_dependency):
+    rol = models.Rol(**rol.dict())
+    db.add(rol)
+    db.commit()
+    return "Rol creado exitosamente"
 
   

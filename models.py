@@ -34,3 +34,8 @@ class Tipoplan(Base):
     idtipoplan = Column(Integer,primary_key=True, index=True)
     nombretipoplan = Column(String(100))
 
+class Rol(Base):
+    __tablename__="rol"
+    idrol = Column(Integer,primary_key=True, index=True)
+    nombrerol = Column(String(100))
+
