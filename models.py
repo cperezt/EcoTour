@@ -1,9 +1,8 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Float, DateTime, Date
 from database import Base
 
 class Usuarios(Base):
     __tablename__ = 'usuarios'
-
     idusuario = Column(Integer, primary_key=True, index=True)
     nombreusuario = Column(String(100))
     documentousuario = Column(String(11))
@@ -11,6 +10,7 @@ class Usuarios(Base):
     correousuario = Column(String(100))
     passwordusuario = Column(String(100))
     estadousuario = Column(String(10))
+    rolusuario = Column(Integer)
 
 class Destinos(Base):
     __tablename__ = 'destinos'
@@ -50,3 +50,39 @@ class Planes(Base):
     fotoplan = Column(String(100))
     idoperadorplan = Column(Integer, ForeignKey('operadores.idoperador'))
     iddestinoplan = Column(Integer, ForeignKey('destinos.iddestino'))
+
+class Reservas(Base):
+    __tablename__ = "reservas"
+    idreserva = Column(Integer, primary_key=True, index=True)
+    saldoreserva = Column(Float)
+    fechareserva = Column(DateTime)
+    valorreserva = Column(Float)
+    estadoreserva = Column(String(20))
+    idusuarioreserva = Column(Integer, ForeignKey('usuarios.idusuario'))
+
+class Cotizaciones(Base):
+    __tablename__="cotizaciones"
+    idcotizacion = Column(Integer, primary_key=True, index=True)
+    fechallegada = Column(Date)
+    fechasalida = Column(Date)
+    archivocotizacion = Column(String(100))
+    estadocotizacion = Column(String(200))
+    cantidadadultos = Column(Integer)
+    cantidadninos = Column(Integer)
+    ciudadorigen = Column(String(20))
+    idusuariocotizacion = Column(Integer)
+
+class DetalleCotizacion(Base):
+    __tablename__ = "detallecotizacion"
+    iddetallecotizacion = Column(Integer, primary_key=True, index=True)
+    idcotizaciondetalle = Column(Integer, nullable=False)
+    idplandetalle = Column(Integer, nullable=False)
+    fechaplan = Column(Date, nullable=False)
+
+class DetalleReservas(Base):
+    __tablename__ = "detallereservas"
+    iddetallereserva = Column(Integer, primary_key=True, index=True)
+    idreservadetalle = Column(Integer, nullable=False)
+    idplandetaller = Column(Integer, nullable=False)
+    fechaplanreserva = Column(Date, nullable=False)
+
